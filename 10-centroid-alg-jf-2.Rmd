@@ -1,8 +1,9 @@
 #Aim: To learn how to create an algorithm that can find a polygon's centroid
 #Prerec- Create the polygon
-#This is done using poly_mat and matrices representing the polygons verticies 
+#This is done using poly_mat and matrices representing the polygons vertices 
+#This code will not work for non-convex polygons 
 ```{r} 
- #This code confirms that the ojbect was created
+ #This code confirms that the object was created
 if(!exists("poly_mat")) {
   message("No poly_mat object provided, creating object representing a 9 by 9 square")
  #This code creates the polygon
@@ -22,14 +23,14 @@ T_all = lapply(i, function(x) {
 ```
 #Calculate triangle centroids
 ```{r}
-C_list = lapply(T_all, function(x) (x[1, ] + x[2, ] +x[3, ] / 3)) #finds the centroid for each column in T_all (Each polygon)
+C_list = lapply(T_all,  function(x) (x[1, ] + x[2, ] + x[3, ]) / 3) #finds the centroid for each column in T_all (Each polygon)
 C = do.call(rbind, C_list)
 ```
 #Calculate triangle areas
 ```{r}
 #vapply produces a single value (area) for every x in function(x)
 A = vapply(T_all, function(x) { 
-  abs(x[1, 1] * (x[2, 2] - x[3, 2]) +
+   abs(x[1, 1] * (x[2, 2] - x[3, 2]) +
         x[2, 1] * (x[3, 2] - x[1, 2]) +
         x[3, 1] * (x[1, 2] - x[2, 2]) ) / 2
 }, FUN.VALUE = double(1))
