@@ -1,0 +1,47 @@
+#Aim: To learn how to create an algorithm that can find a polygon's centroid
+#Prerec- Create the polygon
+#This is done using poly_mat and matrices representing the polygons verticies 
+```{r} 
+ #This code confirms that the ojbect was created
+if(!exists("poly_mat")) {
+  message("No poly_mat object provided, creating object representing a 9 by 9 square")
+ #This code creates the polygon
+  poly_mat = cbind(
+    x = c(0, 0, 9, 9, 0),
+    y = c(0, 9, 9, 0, 0)
+  )}
+```
+#Create sub triangles 
+```{r}
+Origin = poly_mat[1,] #Creates the origin point
+#Generalized function for creating triangles from all verticies
+i = 2:(nrow(poly_mat) - 2)
+T_all = lapply(i, function(x) { 
+  rbind(Origin, poly_mat[x:(x+1), ], Origin)
+  })
+```
+#Calculate triangle centroids
+```{r}
+C_list = lapply(T_all, function(x) (x[1, ] + x[2, ] +x[3, ] / 3)) #finds the centroid for each column in T_all (Each polygon)
+C = do.call(rbind, C_list)
+```
+#Calculate triangle areas
+```{r}
+#vapply produces a single value (area) for every x in function(x)
+A = vapply(T_all, function(x) { 
+  abs(x[1, 1] * (x[2, 2] - x[3, 2]) +
+        x[2, 1] * (x[3, 2] - x[1, 2]) +
+        x[3, 1] * (x[1, 2] - x[2, 2]) ) / 2
+}, FUN.VALUE = double(1))
+```
+#Calculate area weighted centroid average (which would be the centroid of the whole polygon)
+```{r}
+poly_area = sum(A)
+print(paste0("The area is:", poly_area))
+poly_centroid = c(weighted.mean(C[ , 1], A), weighted.mean(C[ , 2], A))
+```
+#Output final results
+```{r}
+print(paste0("The coordinates of the centroid are:", round(poly_centroid[1], 2), ",",
+round(poly_centroid[2], 2)))
+```
